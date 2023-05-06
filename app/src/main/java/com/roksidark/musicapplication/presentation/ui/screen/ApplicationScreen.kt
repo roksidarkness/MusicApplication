@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.roksidark.feature.artistSearch.ArtistSearchScreen
 import com.roksidark.feature.details.DetailsScreen
 import com.roksidark.feature.MainViewModel
-import com.roksidark.musicapplication.presentation.navigation.NavigationTree
+import com.roksidark.feature.navigation.NavigationTree
 
 
 @Composable
@@ -31,8 +31,3 @@ fun ApplicationScreen() {
         }
     }
 }
-
-@Composable
-@ReadOnlyComposable
-fun textResource(@StringRes id: Int): CharSequence =
-    LocalContext.current.resources.getText(id)

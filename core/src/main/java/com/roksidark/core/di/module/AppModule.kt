@@ -1,14 +1,18 @@
 package com.roksidark.core.di.module
 
+import com.roksidark.core.data.interceptor.UserAgentHeaderInterceptor
 import com.roksidark.core.data.repository.RemoteRepositoryImpl
 import com.roksidark.core.domain.network.MusicBrainzApi
 import com.roksidark.core.domain.repository.RemoteRepository
 import com.roksidark.core.domain.usecase.ArtistUseCases
+import com.roksidark.core.domain.usecase.GetAlbumsRemotely
 import com.roksidark.core.domain.usecase.GetArtistsRemotely
+import com.roksidark.core.util.getUserAgent
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -22,14 +26,17 @@ object AppModule {
     @Provides
     fun providesHttpLoggingInterceptor() = HttpLoggingInterceptor()
         .apply {
-            level = HttpLoggingInterceptor.Level.BASIC
+            level = HttpLoggingInterceptor.Level.BODY
         }
+
+
 
     @Singleton
     @Provides
     fun providesOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
         OkHttpClient
             .Builder()
+            .addInterceptor(UserAgentHeaderInterceptor(getUserAgent()))
             .addInterceptor(httpLoggingInterceptor)
             .build()
 
@@ -56,7 +63,8 @@ object AppModule {
     fun provideArtistsUseCases(remoteRepository: RemoteRepository
     ): ArtistUseCases {
         return ArtistUseCases(
-            getArtistsRemotely = GetArtistsRemotely(remoteRepository)
+            getArtistsRemotely = GetArtistsRemotely(remoteRepository),
+            getAlbumRemotely = GetAlbumsRemotely(remoteRepository)
         )
     }
 }
