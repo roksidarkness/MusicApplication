@@ -11,6 +11,7 @@ import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.core.domain.usecase.ArtistUseCases
 import com.roksidark.core.util.Constant.FORMAT
 import com.roksidark.core.util.Constant.TAG
+import com.roksidark.feature.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,8 +21,8 @@ class MainViewModel @Inject constructor(
     private val useCases: ArtistUseCases
 ) : ViewModel() {
 
-    private var _items = MutableLiveData<List<Artist>>()
-    val items: LiveData<List<Artist>> = _items
+    private var _items = MutableLiveData<DataState<List<Artist>>>()
+    val items: LiveData<DataState<List<Artist>>> = _items
 
     private var _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -35,15 +36,16 @@ class MainViewModel @Inject constructor(
                 if (request.isNotBlank()) {
                     _isLoading.value = true
                     val data = useCases.getArtistsRemotely.invoke(FORMAT, request)
-                    _items.value = data?.artists
+                    _items.value = DataState.Success(data?.artists ?: emptyList())
                     _isLoading.value = false
                 }else{
-                    _items.value = emptyList()
+                    _items.value = DataState.Success(emptyList())
                     _isLoading.value = false
                 }
             } catch (error: Exception) {
                 error.localizedMessage?.let {
-                    Log.d(TAG, it)
+                    val errorMessage = error.localizedMessage ?: "Unknown error occurred"
+                    _items.value = DataState.Error(errorMessage)
                     _isLoading.value = false
                 }
             }
@@ -58,8 +60,9 @@ class MainViewModel @Inject constructor(
                 _isLoading.value = false
             } catch (error: Exception) {
                 error.localizedMessage?.let {
-                    Log.d(TAG, it)
+                 //   Log.d(TAG, it)
                     _isLoading.value = false
+                    _itemAlbums.value = emptyList()
                 }
             }
         }

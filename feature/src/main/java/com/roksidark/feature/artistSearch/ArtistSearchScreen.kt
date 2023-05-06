@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +39,7 @@ import com.roksidark.feature.MainViewModel
 import com.roksidark.feature.component.LoadingBar
 import com.roksidark.feature.component.SearchField
 import com.roksidark.feature.navigation.NavigationTree
+import com.roksidark.feature.util.DataState
 import com.roksidark.feature.util.getTagsText
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -48,23 +50,32 @@ fun ArtistSearchScreen(
 ) {
     Box {
         val isLoading by viewModel.isLoading.observeAsState(initial = false)
-        val items by viewModel.items.observeAsState(
-            initial = emptyList())
+        val items: State<DataState<List<Artist>>> = viewModel.items.observeAsState(initial = DataState.Success(emptyList()))
 
-        Column(modifier = Modifier.padding(8.dp)) {
+        when (val dataState = items.value) {
+            is DataState.Success -> {
+                val artists = dataState.data
+                Column(modifier = Modifier.padding(8.dp)) {
 
-            SearchField(onSearchTextChanged = { searchText ->
-                viewModel.performSearch(searchText)
-            })
+                    SearchField(onSearchTextChanged = { searchText ->
+                        viewModel.performSearch(searchText)
+                    })
 
-            ArtistList(items = items, viewModel = viewModel) { it ->
-                navController.navigate("${NavigationTree.Details.name}/${it}") {
-                    popUpTo(NavigationTree.Details.name)
+                    ArtistList(items = artists, viewModel = viewModel) { it ->
+                        navController.navigate("${NavigationTree.Details.name}/${it}") {
+                            popUpTo(NavigationTree.Details.name)
+                        }
+                    }
+
+                    if (isLoading) {
+                        LoadingBar()
+                    }
                 }
             }
-
-            if (isLoading) {
-                LoadingBar()
+            is DataState.Error -> {
+                val errorMessage = dataState.message
+                //TODO
+                // Handle error state
             }
         }
     }
