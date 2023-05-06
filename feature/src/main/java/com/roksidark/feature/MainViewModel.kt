@@ -27,8 +27,8 @@ class MainViewModel @Inject constructor(
     private var _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private var _itemAlbums = MutableLiveData<List<Album?>>()
-    val itemAlbums: LiveData<List<Album?>> = _itemAlbums
+    private var _itemAlbums = MutableLiveData<DataState<List<Album?>>>()
+    val itemAlbums: LiveData<DataState<List<Album?>>> = _itemAlbums
 
     fun performSearch(request: String){
         viewModelScope.launch {
@@ -56,17 +56,15 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val data = useCases.getAlbumRemotely.invoke(FORMAT,id)
-                _itemAlbums.value = data?.releases
+                _itemAlbums.value = DataState.Success(data?.releases ?: emptyList())
                 _isLoading.value = false
             } catch (error: Exception) {
                 error.localizedMessage?.let {
-                 //   Log.d(TAG, it)
+                    val errorMessage = error.localizedMessage ?: "Unknown error occurred"
                     _isLoading.value = false
-                    _itemAlbums.value = emptyList()
+                    _itemAlbums.value = DataState.Error(errorMessage)
                 }
             }
         }
-
     }
-
 }

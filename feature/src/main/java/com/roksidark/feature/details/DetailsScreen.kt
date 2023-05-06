@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.roksidark.core.data.model.entity.album.Album
+import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.core.util.Constant.TAG
 import com.roksidark.feature.MainViewModel
 import com.roksidark.feature.artistSearch.ArtistList
@@ -39,6 +41,7 @@ import com.roksidark.feature.artistSearch.ItemRow
 import com.roksidark.feature.component.LoadingBar
 import com.roksidark.feature.component.SearchField
 import com.roksidark.feature.navigation.NavigationTree
+import com.roksidark.feature.util.DataState
 import com.roksidark.feature.util.getTagsText
 
 @Composable
@@ -48,19 +51,29 @@ fun DetailsScreen(
 ) {
 
     val isLoading by viewModel.isLoading.observeAsState(initial = true)
-    val items by viewModel.itemAlbums.observeAsState(
-        initial = emptyList())
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.padding(8.dp)) {
+    val items: State<DataState<List<Album?>>> = viewModel.itemAlbums.observeAsState(initial = DataState.Success(emptyList()))
 
-                AlbumList(items = items, viewModel = viewModel)
+    when (val dataState = items.value) {
+        is DataState.Success -> {
+            val albums = dataState.data
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(modifier = Modifier.padding(8.dp)) {
 
-                if (isLoading) {
-                    LoadingBar()
+                    AlbumList(items = albums, viewModel = viewModel)
+
+                    if (isLoading) {
+                        LoadingBar()
+                    }
                 }
             }
         }
+        is DataState.Error -> {
+            val errorMessage = dataState.message
+            //TODO
+            // Handle error state
+        }
+    }
 }
 
 
