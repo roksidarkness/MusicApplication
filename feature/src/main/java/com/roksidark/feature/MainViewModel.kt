@@ -5,10 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.roksidark.core.data.model.entity.Album
-import com.roksidark.core.data.model.entity.Artist
+import com.roksidark.core.data.model.entity.album.Album
 import com.roksidark.core.data.model.entity.SearchItem
+import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.core.domain.usecase.ArtistUseCases
+import com.roksidark.core.util.Constant.FORMAT
 import com.roksidark.core.util.Constant.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -33,8 +34,7 @@ class MainViewModel @Inject constructor(
             try {
                 if (request.isNotBlank()) {
                     _isLoading.value = true
-                    //TODO
-                    val data = useCases.getArtistsRemotely.invoke("json", request)
+                    val data = useCases.getArtistsRemotely.invoke(FORMAT, request)
                     _items.value = data?.artists
                     _isLoading.value = false
                 }else{
@@ -53,8 +53,7 @@ class MainViewModel @Inject constructor(
     fun getDetails(id: String) {
         viewModelScope.launch {
             try {
-                //TODO
-                val data = useCases.getAlbumRemotely.invoke("json", id)
+                val data = useCases.getAlbumRemotely.invoke(FORMAT,id)
                 _itemAlbums.value = data?.releases
                 _isLoading.value = false
             } catch (error: Exception) {

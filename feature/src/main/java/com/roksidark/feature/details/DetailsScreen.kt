@@ -1,6 +1,7 @@
 package com.roksidark.feature.details
 
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,76 +22,159 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.roksidark.core.data.model.entity.Artist
+import com.roksidark.core.data.model.entity.album.Album
+import com.roksidark.core.util.Constant.TAG
 import com.roksidark.feature.MainViewModel
+import com.roksidark.feature.artistSearch.ArtistList
+import com.roksidark.feature.artistSearch.ItemRow
 import com.roksidark.feature.component.LoadingBar
+import com.roksidark.feature.component.SearchField
+import com.roksidark.feature.navigation.NavigationTree
+import com.roksidark.feature.util.getTagsText
 
 @Composable
 fun DetailsScreen(
     selectedItem: String,
     viewModel: MainViewModel
 ) {
-    val item by viewModel.itemAlbums.observeAsState()
 
-    item?.let{
-            item ->
+    val isLoading by viewModel.isLoading.observeAsState(initial = true)
+    val items by viewModel.itemAlbums.observeAsState(
+        initial = emptyList())
+
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier
-                .padding(8.dp)
-                .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                Card(
-                    shape = RoundedCornerShape(8.dp),
-                  //  elevation = 2.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        TextDetails(
-                          //  label = textResource(id = R.string.label_start_date).toString(),
-                            label = "",
-                            text = item.get(0)?.title ?: "NO TITLE",
-                            null
-                        )
+            Column(modifier = Modifier.padding(8.dp)) {
 
-                    }
+                AlbumList(items = items, viewModel = viewModel)
+
+                if (isLoading) {
+                    LoadingBar()
                 }
             }
         }
-    }
+}
 
+
+@Composable
+fun AlbumList(
+    items: List<Album?>,
+    viewModel: MainViewModel
+) {
+    if (items.isNotEmpty()) {
+    LazyColumn(
+        contentPadding = PaddingValues(bottom = 16.dp)
+    ) {
+
+            items(items) { item ->
+                ItemRow(item = item, viewModel = viewModel)
+            }
+    }
+    }
+    else {
+        EmptyList()
+    }
 }
 
 @Composable
-fun TextDetails(
-    label: String,
+fun ItemRow(
+    item: Album?,
+    viewModel: MainViewModel,
+    onItemClicked: (id: String) -> Unit = { }
+) {
+    item?.let{
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .animateContentSize()
+                    .padding(16.dp)
+            ) {
+                Box() {
+                }
+                ItemDetails(
+                    MaterialTheme.colorScheme.primary,
+                    text = item.title ?: "NO TITLE",
+                    null
+                )
+
+                item.date?.let {
+                    ItemDetails(
+                        Color.Black,
+                        text = it,
+                        null
+                    )
+                }
+                item.status?.let {
+                    ItemDetails(
+                        MaterialTheme.colorScheme.secondary,
+                        text = it,
+                        FontStyle.Italic
+                    )
+                }
+
+            }
+        }
+    }
+}
+@Composable
+fun EmptyList(){
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .animateContentSize()
+                .padding(16.dp)
+        ) {
+            Box() {
+                Text(text = "No albums",
+                    modifier = Modifier
+                        .padding(
+                            start = 4.dp,
+                            end = 4.dp,
+                            top = 4.dp,
+                            bottom = 6.dp
+                        ),
+                    fontSize = 16.sp)
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ItemDetails(
+    color: Color,
     text: String,
-    color: String?
+    fontStyle: FontStyle?
 ) {
     Row() {
         Text(
-            text = "$label",
-            color = MaterialTheme.colorScheme.inverseSurface,
-            modifier = Modifier
-                .padding(
-                    start = 6.dp,
-                    end = 4.dp,
-                    top = 4.dp,
-                    bottom = 6.dp
-                ),
-            fontSize = 16.sp
-        )
-        Text(
             text = "$text",
-            color = MaterialTheme.colorScheme.primary,
+            fontStyle = fontStyle ?: FontStyle.Normal,
+            color = color,
             modifier = Modifier
                 .padding(
                     start = 4.dp,

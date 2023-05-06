@@ -6,6 +6,7 @@ object Constant {
 
     //Base url
     const val BASE_URL = "https://musicbrainz.org/ws/2/"
+    const val FORMAT = "json"
 
     const val USER_AGENT_CONTACT = "https://github.com/roksidarkness"
 }

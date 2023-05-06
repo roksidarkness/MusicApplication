@@ -1,6 +1,6 @@
 package com.roksidark.feature.util
 
-import com.roksidark.core.data.model.entity.Tag
+import com.roksidark.core.data.model.entity.artist.Tag
 
 fun getTagsText(tags: List<Tag>?): String{
     var text = ""

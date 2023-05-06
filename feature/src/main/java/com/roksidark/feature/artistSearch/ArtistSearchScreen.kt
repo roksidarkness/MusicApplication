@@ -33,8 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.roksidark.core.data.model.entity.Artist
-import com.roksidark.core.data.model.entity.Tag
+import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.feature.MainViewModel
 import com.roksidark.feature.component.LoadingBar
 import com.roksidark.feature.component.SearchField
@@ -158,9 +157,4 @@ fun ItemDetails(
         )
     }
 }
-
-@Composable
-@ReadOnlyComposable
-fun textResource(@StringRes id: Int): CharSequence =
-    LocalContext.current.resources.getText(id)
 
