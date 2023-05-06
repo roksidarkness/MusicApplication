@@ -70,8 +70,7 @@ fun DetailsScreen(
         }
         is DataState.Error -> {
             val errorMessage = dataState.message
-            //TODO
-            // Handle error state
+            Text(text = errorMessage, modifier = Modifier.padding(8.dp))
         }
     }
 }
