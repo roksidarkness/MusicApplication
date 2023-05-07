@@ -13,6 +13,9 @@ import com.roksidark.core.util.Constant.FORMAT
 import com.roksidark.core.util.Constant.TAG
 import com.roksidark.feature.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +32,13 @@ class MainViewModel @Inject constructor(
 
     private var _itemAlbums = MutableLiveData<DataState<List<Album?>>>()
     val itemAlbums: LiveData<DataState<List<Album?>>> = _itemAlbums
+
+    private val _searchText = MutableStateFlow("")
+    val searchText: StateFlow<String> = _searchText.asStateFlow()
+
+    fun updateSearchText(newSearchText: String) {
+        _searchText.value = newSearchText
+    }
 
     fun performSearch(request: String){
         viewModelScope.launch {

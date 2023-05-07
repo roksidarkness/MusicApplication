@@ -56,7 +56,7 @@ fun ArtistSearchScreen(
 
             SearchField(onSearchTextChanged = { searchText ->
                 viewModel.performSearch(searchText)
-            })
+            }, viewModel)
 
             when (val dataState = items.value) {
                 is DataState.Success -> {
