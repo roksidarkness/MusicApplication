@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,9 +16,9 @@ import com.roksidark.feature.navigation.NavigationTree
 
 
 @Composable
-fun ApplicationScreen() {
+fun ApplicationScreen(navController: NavHostController) {
 
-    val navController = rememberNavController()
+
     val viewModel = hiltViewModel<MainViewModel>()
 
     NavHost(navController = navController, startDestination = NavigationTree.List.name) {
