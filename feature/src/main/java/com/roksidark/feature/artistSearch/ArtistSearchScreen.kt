@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.feature.MainViewModel
+import com.roksidark.feature.component.ItemDetails
 import com.roksidark.feature.component.LoadingBar
 import com.roksidark.feature.component.SearchField
 import com.roksidark.feature.navigation.NavigationTree
@@ -117,51 +118,12 @@ fun ItemRow(
                 .animateContentSize()
                 .padding(16.dp)
         ) {
-            Box() {
-            }
             ItemDetails(
                 MaterialTheme.colorScheme.primary,
                 text = item.name ?: "NO NAME",
                 null
             )
-            item.area?.name?.let {
-                ItemDetails(
-                    Color.Black,
-                    text = it,
-                    null
-                )
-            }
-            item.tags?.let {
-                ItemDetails(
-                    MaterialTheme.colorScheme.secondary,
-                    text = getTagsText(it),
-                    FontStyle.Italic
-                )
-            }
         }
-    }
-}
-
-@Composable
-fun ItemDetails(
-    color: Color,
-    text: String,
-    fontStyle: FontStyle?
-) {
-    Row() {
-        Text(
-            text = "$text",
-            fontStyle = fontStyle ?: FontStyle.Normal,
-            color = color,
-            modifier = Modifier
-                .padding(
-                    start = 4.dp,
-                    end = 4.dp,
-                    top = 4.dp,
-                    bottom = 6.dp
-                ),
-            fontSize = 16.sp
-        )
     }
 }
 

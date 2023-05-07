@@ -5,7 +5,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,9 +25,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.roksidark.core.data.model.entity.album.Album
+import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.feature.MainViewModel
+import com.roksidark.feature.component.ItemDetails
 import com.roksidark.feature.component.LoadingBar
 import com.roksidark.feature.util.DataState
+import com.roksidark.feature.util.getTagsText
 
 @Composable
 fun DetailsScreen(
@@ -41,28 +43,92 @@ fun DetailsScreen(
     val items: State<DataState<List<Album?>>> =
         viewModel.itemAlbums.observeAsState(initial = DataState.Success(emptyList()))
 
-    when (val dataState = items.value) {
-        is DataState.Success -> {
-            val albums = dataState.data
-            Box(modifier = Modifier.fillMaxSize()) {
-                Column(modifier = Modifier.padding(8.dp)) {
+    val artists by viewModel.items.observeAsState()
 
-                    AlbumList(items = albums, viewModel = viewModel)
+    val item = findArtistById(selectedItem, artists)
 
-                    if (isLoading) {
-                        LoadingBar()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            item?.let { it ->
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    Card(
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            ItemDetails(
+                                MaterialTheme.colorScheme.primary,
+                                text = item.name ?: "NO NAME",
+                                null
+                            )
+                            item.area?.name?.let {
+                                ItemDetails(
+                                    Color.Black,
+                                    text = it,
+                                    null
+                                )
+                            }
+                            item.tags?.let {
+                                ItemDetails(
+                                    MaterialTheme.colorScheme.secondary,
+                                    text = getTagsText(it),
+                                    FontStyle.Italic
+                                )
+                            }
+                        }
                     }
+
+                    Text(
+                        text = "Albums: ",
+                        fontSize = 20.sp,
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(
+                                start = 16.dp,
+                                top = 16.dp,
+                                end = 16.dp,
+                                bottom = 0.dp
+                            )
+                    )
                 }
             }
-        }
 
-        is DataState.Error -> {
-            val errorMessage = dataState.message
-            Text(
-                text = errorMessage,
-                modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
+            when (val dataState = items.value) {
+                is DataState.Success -> {
+                    val albums = dataState.data
+
+                    Column(
+                        modifier = Modifier.padding(
+                            start = 8.dp,
+                            top = 0.dp,
+                            end = 8.dp,
+                            bottom = 0.dp
+                        )
+                    ) {
+
+                        AlbumList(items = albums, viewModel = viewModel)
+
+                        if (isLoading) {
+                            LoadingBar()
+                        }
+                    }
+
+                }
+
+                is DataState.Error -> {
+                    val errorMessage = dataState.message
+                    Text(
+                        text = errorMessage,
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
     }
 }
@@ -108,8 +174,6 @@ fun ItemRow(
                     .animateContentSize()
                     .padding(16.dp)
             ) {
-                Box() {
-                }
                 ItemDetails(
                     MaterialTheme.colorScheme.primary,
                     text = item.title ?: "NO TITLE",
@@ -169,26 +233,10 @@ fun EmptyList() {
     }
 }
 
-
-@Composable
-fun ItemDetails(
-    color: Color,
-    text: String,
-    fontStyle: FontStyle?
-) {
-    Row() {
-        Text(
-            text = "$text",
-            fontStyle = fontStyle ?: FontStyle.Normal,
-            color = color,
-            modifier = Modifier
-                .padding(
-                    start = 4.dp,
-                    end = 4.dp,
-                    top = 4.dp,
-                    bottom = 6.dp
-                ),
-            fontSize = 16.sp
-        )
+fun findArtistById(artistId: String, artists: DataState<List<Artist>>?): Artist? {
+    if (artists is DataState.Success) {
+        val artistList = artists.data
+        return artistList.find { artist -> artist.id == artistId }
     }
+    return null
 }
