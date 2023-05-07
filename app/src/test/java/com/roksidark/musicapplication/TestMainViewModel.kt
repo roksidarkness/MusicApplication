@@ -22,26 +22,29 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.given
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.given
 import org.mockito.kotlin.mock
-import org.junit.Assert.assertTrue
+import org.mockito.kotlin.verify
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TestMainViewModel {
 
-    @get:Rule val executor = InstantTaskExecutorRule()
+    @get:Rule
+    val executor = InstantTaskExecutorRule()
 
-    @Mock private lateinit var mockObserverArtists: Observer<DataState<List<Artist>>>
-    @Mock private lateinit var mockObserverAlbums: Observer<DataState<List<Album?>>>
+    @Mock
+    private lateinit var mockObserverArtists: Observer<DataState<List<Artist>>>
+    @Mock
+    private lateinit var mockObserverAlbums: Observer<DataState<List<Album?>>>
 
     private val repository: RemoteRepository = mock()
 
@@ -161,20 +164,30 @@ class TestMainViewModel {
     companion object {
         const val searchItem = "lacuna"
         private val testArtistList = listOf(
-            Artist("1", null, null, "Artist1",
+            Artist(
+                "1", null, null, "Artist1",
                 null, null, null, null,
-                null, null),
-            Artist("2", null, null, "Artist2",
+                null, null
+            ),
+            Artist(
+                "2", null, null, "Artist2",
                 null, null, null, null,
-                null, null)
+                null, null
+            )
         )
 
         val searchItemAlbums = SearchItem("2023-05-06T09:56:10.505Z", testArtistList)
         const val ID = "123"
-        private val albumList = listOf(Album("1", null, "Album1", null,
-            null, null, null, null, null, null),
-            Album("2", null, "Album2", null,
-                null, null, null, null, null, null))
+        private val albumList = listOf(
+            Album(
+                "1", null, "Album1", null,
+                null, null, null, null, null, null
+            ),
+            Album(
+                "2", null, "Album2", null,
+                null, null, null, null, null, null
+            )
+        )
 
         val albumItem = AlbumItem(albumList)
     }

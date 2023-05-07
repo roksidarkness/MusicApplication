@@ -1,16 +1,13 @@
 package com.roksidark.feature
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.roksidark.core.data.model.entity.album.Album
-import com.roksidark.core.data.model.entity.SearchItem
 import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.core.domain.usecase.ArtistUseCases
 import com.roksidark.core.util.Constant.FORMAT
-import com.roksidark.core.util.Constant.TAG
 import com.roksidark.feature.util.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +37,7 @@ class MainViewModel @Inject constructor(
         _searchText.value = newSearchText
     }
 
-    fun performSearch(request: String){
+    fun performSearch(request: String) {
         viewModelScope.launch {
             try {
                 if (request.isNotBlank()) {
@@ -48,7 +45,7 @@ class MainViewModel @Inject constructor(
                     val data = useCases.getArtistsRemotely.invoke(FORMAT, request)
                     _items.value = DataState.Success(data?.artists ?: emptyList())
                     _isLoading.value = false
-                }else{
+                } else {
                     _items.value = DataState.Success(emptyList())
                     _isLoading.value = false
                 }
@@ -65,7 +62,7 @@ class MainViewModel @Inject constructor(
     fun getDetails(id: String) {
         viewModelScope.launch {
             try {
-                val data = useCases.getAlbumRemotely.invoke(FORMAT,id)
+                val data = useCases.getAlbumRemotely.invoke(FORMAT, id)
                 _itemAlbums.value = DataState.Success(data?.releases ?: emptyList())
                 _isLoading.value = false
             } catch (error: Exception) {

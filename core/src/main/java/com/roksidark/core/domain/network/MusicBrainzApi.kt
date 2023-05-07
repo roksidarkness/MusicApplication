@@ -2,10 +2,8 @@ package com.roksidark.core.domain.network
 
 import com.roksidark.core.data.model.entity.AlbumItem
 import com.roksidark.core.data.model.entity.SearchItem
-import com.roksidark.core.util.Constant.FORMAT
 import retrofit2.http.GET
 import retrofit2.http.Query
-
 
 interface MusicBrainzApi {
 

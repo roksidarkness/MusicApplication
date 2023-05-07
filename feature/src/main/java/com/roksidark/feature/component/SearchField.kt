@@ -8,18 +8,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.roksidark.feature.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class,
-    ExperimentalComposeUiApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun SearchField(
     onSearchTextChanged: (String) -> Unit,
@@ -35,11 +33,12 @@ fun SearchField(
             viewModel.updateSearchText(newSearchText)
         },
         label = { Text("Search") },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp)
     )
 
-    if (searchText.isEmpty()){
+    if (searchText.isEmpty()) {
         keyboardController?.hide()
     }
 }

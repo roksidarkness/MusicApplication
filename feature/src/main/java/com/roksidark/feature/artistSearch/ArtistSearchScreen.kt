@@ -1,9 +1,7 @@
 package com.roksidark.feature.artistSearch
 
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,29 +9,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberImagePainter
 import com.roksidark.core.data.model.entity.artist.Artist
 import com.roksidark.feature.MainViewModel
 import com.roksidark.feature.component.LoadingBar
@@ -50,7 +37,8 @@ fun ArtistSearchScreen(
 ) {
     Box {
         val isLoading by viewModel.isLoading.observeAsState(initial = false)
-        val items: State<DataState<List<Artist>>> = viewModel.items.observeAsState(initial = DataState.Success(emptyList()))
+        val items: State<DataState<List<Artist>>> =
+            viewModel.items.observeAsState(initial = DataState.Success(emptyList()))
 
         Column(modifier = Modifier.padding(8.dp)) {
 
@@ -71,11 +59,14 @@ fun ArtistSearchScreen(
                         LoadingBar()
                     }
                 }
+
                 is DataState.Error -> {
                     val errorMessage = dataState.message
-                    Text(text = errorMessage,
+                    Text(
+                        text = errorMessage,
                         modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.primary)
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }
@@ -92,8 +83,10 @@ fun ArtistList(
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         items(items) { item ->
-            ItemRow(item = item, viewModel = viewModel,
-                onItemClicked = onItemClicked)
+            ItemRow(
+                item = item, viewModel = viewModel,
+                onItemClicked = onItemClicked
+            )
         }
     }
 }
@@ -119,9 +112,11 @@ fun ItemRow(
                 }
             }
     ) {
-        Column(modifier = Modifier
-            .animateContentSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .animateContentSize()
+                .padding(16.dp)
+        ) {
             Box() {
             }
             ItemDetails(
@@ -129,7 +124,7 @@ fun ItemRow(
                 text = item.name ?: "NO NAME",
                 null
             )
-            item.area?.name?.let{
+            item.area?.name?.let {
                 ItemDetails(
                     Color.Black,
                     text = it,
