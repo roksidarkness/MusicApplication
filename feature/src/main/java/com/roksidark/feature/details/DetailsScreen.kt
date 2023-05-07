@@ -70,7 +70,9 @@ fun DetailsScreen(
         }
         is DataState.Error -> {
             val errorMessage = dataState.message
-            Text(text = errorMessage, modifier = Modifier.padding(8.dp))
+            Text(text = errorMessage,
+                modifier = Modifier.padding(16.dp),
+                color = MaterialTheme.colorScheme.primary)
         }
     }
 }

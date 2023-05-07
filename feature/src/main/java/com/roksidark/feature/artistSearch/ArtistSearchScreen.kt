@@ -52,15 +52,15 @@ fun ArtistSearchScreen(
         val isLoading by viewModel.isLoading.observeAsState(initial = false)
         val items: State<DataState<List<Artist>>> = viewModel.items.observeAsState(initial = DataState.Success(emptyList()))
 
-        when (val dataState = items.value) {
-            is DataState.Success -> {
-                val artists = dataState.data
-                Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(8.dp)) {
 
-                    SearchField(onSearchTextChanged = { searchText ->
-                        viewModel.performSearch(searchText)
-                    })
+            SearchField(onSearchTextChanged = { searchText ->
+                viewModel.performSearch(searchText)
+            })
 
+            when (val dataState = items.value) {
+                is DataState.Success -> {
+                    val artists = dataState.data
                     ArtistList(items = artists, viewModel = viewModel) { it ->
                         navController.navigate("${NavigationTree.Details.name}/${it}") {
                             popUpTo(NavigationTree.Details.name)
@@ -71,10 +71,12 @@ fun ArtistSearchScreen(
                         LoadingBar()
                     }
                 }
-            }
-            is DataState.Error -> {
-                val errorMessage = dataState.message
-                Text(text = errorMessage, modifier = Modifier.padding(8.dp))
+                is DataState.Error -> {
+                    val errorMessage = dataState.message
+                    Text(text = errorMessage,
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.primary)
+                }
             }
         }
     }
