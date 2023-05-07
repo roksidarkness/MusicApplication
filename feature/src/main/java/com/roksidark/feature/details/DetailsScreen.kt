@@ -123,8 +123,8 @@ fun DetailsScreen(
                 is DataState.Error -> {
                     val errorMessage = dataState.message
                     Text(
-                        text = errorMessage,
-                        modifier = Modifier.padding(16.dp),
+                        text = "Error: $errorMessage",
+                        modifier = Modifier.padding(32.dp),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -183,14 +183,21 @@ fun ItemRow(
                 item.date?.let {
                     ItemDetails(
                         Color.Black,
-                        text = it,
+                        text = "Date: $it",
+                        null
+                    )
+                }
+                item.trackCount?.let {
+                    ItemDetails(
+                        Color.Black,
+                        text = "Tracks: $it",
                         null
                     )
                 }
                 item.status?.let {
                     ItemDetails(
                         MaterialTheme.colorScheme.secondary,
-                        text = it,
+                        text = "Status: $it",
                         FontStyle.Italic
                     )
                 }

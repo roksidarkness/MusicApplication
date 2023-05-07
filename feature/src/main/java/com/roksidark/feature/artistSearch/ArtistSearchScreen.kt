@@ -64,7 +64,7 @@ fun ArtistSearchScreen(
                 is DataState.Error -> {
                     val errorMessage = dataState.message
                     Text(
-                        text = errorMessage,
+                        text = "Error: $errorMessage",
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.primary
                     )
